@@ -307,7 +307,7 @@ export const addCourses = async (req, res) => {
   try {
     const { courseName, trainerName, duration, fees } = req.body;
 
-    if (!courseName || !trainerName || !duration || !fees) {
+    if (!courseName || !trainerName || !duration || fees === undefined || fees === null || String(fees).trim() === "") {
       res.status(400).json({
         success: false,
         msg: "please provide all details",
@@ -316,11 +316,12 @@ export const addCourses = async (req, res) => {
     }
 
     const feesNum = Number(fees);
-    if (feesNum < 0) {
-      res.status(400).json({
+    if (feesNum <= 0) {
+      return res.status(400).json({
         success: false,
         msg: "fees must be greater than 0",
       });
+    
     }
 
     const saveCourseData = await courseModel.create({
